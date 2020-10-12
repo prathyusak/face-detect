@@ -6,8 +6,10 @@ import Rank from './components/Rank/Rank';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import SignIn from './components/SignIn/SignIn';
-import Register from './components/Register/Register'
+import Register from './components/Register/Register';
+import Demographics from './components/Demographics/Demographics'
 import Particles from 'react-particles-js';
+
 
 const particleOptions = {
  particles: {
@@ -128,7 +130,8 @@ onButtonSubmit = () => {
               <Logo />
               <Rank  name={this.state.user.name} entries={this.state.user.entries} />
               <ImageLinkForm onInput={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/>
-              <FaceRecognition box={this.state.box} values={this.state.values} imageUrl={this.state.imageUrl}/>
+              <FaceRecognition box={this.state.box}  imageUrl={this.state.imageUrl}/>
+              <Demographics values={this.state.values} />
             </div>
           :(this.state.route === 'signin'
               ? <SignIn loadUser={this.loadUser}  onRouteChange={this.onRouteChange}/>

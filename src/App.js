@@ -63,6 +63,8 @@ calculateFaceLocation = (data) => {
   const concepts = data.rawData.outputs[0].data.regions[0].data.concepts
   const values = concepts.filter(num => num.value > 0.5)
   this.setState({values:values});
+  console.log(values)
+  console.log(this.state.values)
   const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
   const image = document.getElementById('inputimage');
   const width = Number(image.width);

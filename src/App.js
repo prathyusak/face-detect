@@ -58,10 +58,10 @@ loadUser = (data) => {
   }
 
 calculateFaceLocation = (data) => {
-  console.log(data.rawData.outputs[0].data.regions[0].data.concepts)
+  //console.log(data.rawData.outputs[0].data.regions[0].data.concepts)
   const concepts = data.rawData.outputs[0].data.regions[0].data.concepts
   const values = concepts.filter(num => num.value > 0.5)
-  console.log(values)
+  console.log(values.name)
   const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
   const image = document.getElementById('inputimage');
   const width = Number(image.width);
@@ -76,7 +76,7 @@ calculateFaceLocation = (data) => {
 };
 
 displayFaceBox = (box) => {
-  console.log(box)
+  //console.log(box)
   this.setState({box:box});
   };
 onRouteChange = (route) => {

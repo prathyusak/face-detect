@@ -130,8 +130,8 @@ onButtonSubmit = () => {
               <Logo />
               <Rank  name={this.state.user.name} entries={this.state.user.entries} />
               <ImageLinkForm onInput={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/>
-              <FaceRecognition box={this.state.box}  imageUrl={this.state.imageUrl}/>
               <Demographics values={this.state.values} />
+              <FaceRecognition box={this.state.box}  imageUrl={this.state.imageUrl}/>
             </div>
           :(this.state.route === 'signin'
               ? <SignIn loadUser={this.loadUser}  onRouteChange={this.onRouteChange}/>

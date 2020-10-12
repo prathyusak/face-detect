@@ -2,7 +2,7 @@ import React from 'react';
 
 function Demographics({values}) {
   return (
-  	   <div className='center ma'> Demographic information 
+  	   <div> Demographic information 
   	    <ul>
   	    {values.map(item => {
   	    	return <li>{item.name}</li>;

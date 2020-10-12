@@ -25,6 +25,7 @@ const intialState = {
       input:'',
       imageUrl:'',
       box:{},
+      values:[],
       route:'signin',
       isSignedIn:false,
       user: {
@@ -61,7 +62,7 @@ calculateFaceLocation = (data) => {
   //console.log(data.rawData.outputs[0].data.regions[0].data.concepts)
   const concepts = data.rawData.outputs[0].data.regions[0].data.concepts
   const values = concepts.filter(num => num.value > 0.5)
-  console.log(values[0].name)
+  this.setState({values:values});
   const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
   const image = document.getElementById('inputimage');
   const width = Number(image.width);
@@ -125,7 +126,7 @@ onButtonSubmit = () => {
               <Logo />
               <Rank  name={this.state.user.name} entries={this.state.user.entries} />
               <ImageLinkForm onInput={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/>
-              <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl}/>
+              <FaceRecognition box={this.state.box} values={this.state.values} imageUrl={this.state.imageUrl}/>
             </div>
           :(this.state.route === 'signin'
               ? <SignIn loadUser={this.loadUser}  onRouteChange={this.onRouteChange}/>

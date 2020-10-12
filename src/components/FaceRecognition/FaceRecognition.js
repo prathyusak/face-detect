@@ -11,7 +11,7 @@ function FaceRecognition({imageUrl, box, values}) {
   	    <div> Demographic information 
   	    <ul>
   	    {values.map(item => {
-  	    	return <li>{item}</li>;
+  	    	return <li>{item.name}</li>;
   	    })}
   	    </ul>
   	    </div>

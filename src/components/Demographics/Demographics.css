@@ -1,0 +1,11 @@
+ .labeling {
+    position: relative;
+    justify-content: center;
+    cursor: default;
+    padding-top: 15em;
+}
+
+.listing {
+	list-style: none;
+}
+

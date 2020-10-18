@@ -1,7 +1,8 @@
  .labeling {
-    position: relative;
-    justify-content: center;
-    cursor: default;
+    position: absolute;
+    align-content:left;
+    left: 30rem;
+    top: 15rem;
     padding-top: 15em;
 }
 

@@ -10,7 +10,6 @@ import Register from './components/Register/Register';
 import Demographics from './components/Demographics/Demographics'
 import Particles from 'react-particles-js';
 
-
 const particleOptions = {
  particles: {
     number: {
@@ -30,6 +29,7 @@ const intialState = {
       values:[],
       route:'signin',
       isSignedIn:false,
+      selectedFile: null,
       user: {
         id:'',
         name:'',
@@ -43,6 +43,7 @@ class App extends Component {
   constructor() {
     super();
     this.state= intialState
+
   };
 
 loadUser = (data) => {
@@ -96,28 +97,74 @@ onRouteChange = (route) => {
 onInputChange = (event) => {
   this.setState({input:event.target.value})
 };
+  
+onUploadImage = (event) => {
+  this.setState({
+      selectedFile: event.target.files[0],
+      loaded: 0,
+    })
+      const reader = new FileReader();
+    const url = reader.readAsDataURL(event.target.files[0]);
+    reader.onloadend = function (e) {
+      this.setState({
+          imageUrl: [reader.result]
+      })
+    }.bind(this);
+  console.log(url) // Would see a path?
+  // TODO: concat files
+};
 
 onButtonSubmit = () => {
-  this.setState({imageUrl:this.state.input})
-  fetch('https://secret-tundra-90598.herokuapp.com/imageurl',{method:'post',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({input:this.state.input})})
-    .then(response => response.json()).then( response =>{
-    if (response) {
-      fetch('https://secret-tundra-90598.herokuapp.com/image',{
-        method:'put',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-                            id:this.state.user.id
-                            })
-      })
-      .then(response => response.json())
-      .then(count => {
-        this.setState(Object.assign(this.state.user,{entries:count}))
-      })
+  if (this.state.input) {
+    this.setState({imageUrl:this.state.input})
+    fetch('https://secret-tundra-90598.herokuapp.com/imageurl',{method:'post',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({input:this.state.input})})
+      .then(response => response.json()).then( response =>{
+      if (response) {
+        fetch('https://secret-tundra-90598.herokuapp.com/image',{
+          method:'put',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+                              id:this.state.user.id
+                              })
+        })
+        .then(response => response.json())
+        .then(count => {
+          this.setState(Object.assign(this.state.user,{entries:count}))
+        })
+      }
+      this.displayFaceBox(this.calculateFaceLocation(response)) 
+    })
+    .catch(err =>console.log(err))
+
+  } else {
+    const file = this.state.selectedFile
+    const formData = new FormData()
+    formData.append('myFile',file)
+
+
+    //this.setState({imageUrl: URL.createObjectURL(this.state.selectedFile)})
+    fetch('https://secret-tundra-90598.herokuapp.com/saveImage', {method: 'POST',body: formData})
+    .then(response => response.json())
+    .then(response => {
+      if (response) {
+        fetch('https://secret-tundra-90598.herokuapp.com/image',{
+          method:'put',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+                              id:this.state.user.id
+                              })
+        })
+        .then(response => response.json())
+        .then(count => {
+          this.setState(Object.assign(this.state.user,{entries:count}))
+        })
+      }
+      this.displayFaceBox(this.calculateFaceLocation(response)) 
+    })
+    .catch(err =>console.log(err))
     }
-    this.displayFaceBox(this.calculateFaceLocation(response)) 
-  })
-  .catch(err =>console.log(err))
+  
 };
 
   render() {
@@ -129,7 +176,7 @@ onButtonSubmit = () => {
           ?<div>
               <Logo />
               <Rank  name={this.state.user.name} entries={this.state.user.entries} />
-              <ImageLinkForm onInput={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/>
+              <ImageLinkForm onInput={this.onInputChange} onUpload={this.onUploadImage} onButtonSubmit={this.onButtonSubmit}/>
               <FaceRecognition box={this.state.box}  imageUrl={this.state.imageUrl}/>
               <Demographics values={this.state.values} />
             </div>

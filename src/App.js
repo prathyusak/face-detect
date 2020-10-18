@@ -95,10 +95,12 @@ onRouteChange = (route) => {
 };
 
 onInputChange = (event) => {
+  this.setState({values:[],box:{}})
   this.setState({input:event.target.value})
 };
   
 onUploadImage = (event) => {
+  this.setState({values:[],box:{}})
   this.setState({
       selectedFile: event.target.files[0],
       loaded: 0,
@@ -115,6 +117,7 @@ onUploadImage = (event) => {
 };
 
 onButtonSubmit = () => {
+
   if (this.state.input) {
     this.setState({imageUrl:this.state.input})
     fetch('https://secret-tundra-90598.herokuapp.com/imageurl',{method:'post',headers:{'Content-Type':'application/json'},

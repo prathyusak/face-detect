@@ -1,7 +1,6 @@
  .labeling {
-    position: absolute;
+    position: fixed;
     align-content:left;
-    left: 30rem;
     top: 15rem;
     padding-top: 15em;
 }

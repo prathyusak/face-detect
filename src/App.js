@@ -25,8 +25,7 @@ const particleOptions = {
 const intialState = {
       input:'',
       imageUrl:'',
-      box:{  leftCol: 0,rightCol:0,topRow:0,bottomRow:0 ,values: []},
-      values:[],
+      boxArray:[],
       route:'signin',
       isSignedIn:false,
       selectedFile: null,
@@ -61,14 +60,17 @@ loadUser = (data) => {
     this.onButtonSubmit()
   }
 
+
 calculateFaceLocation = (data) => {
   //console.log(data.rawData.outputs[0].data.regions[0].data.concepts)
-  const concepts = data.rawData.outputs[0].data.regions[0].data.concepts
-  const values = concepts.filter(num => num.value > 0.5)
+  //const concepts = data.rawData.outputs[0].data.regions[0].data.concepts
+  const concepts = data.data.concepts;
+  const values = concepts.filter(num => num.value > 0.5);
   //this.setState({values:values});
    console.log(values.map(item =>  item.name))
   // console.log(this.state.values)
-  const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
+  //const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
+  const clarifaiFace = data.region_info.bounding_box;
   const image = document.getElementById('inputimage');
   const width = Number(image.width);
   const height = Number(image.height);
@@ -82,9 +84,17 @@ calculateFaceLocation = (data) => {
   }
 };
 
-displayFaceBox = (box) => {
+calculateFaceLocationArray =(data) => {
+  const regions = data.rawData.outputs[0].data.regions
+  var Array =[]
+  regions.forEach(item => Array.push(this.calculateFaceLocation(item)))
+  console.log(Array)
+  return Array
+};
+
+displayFaceBox = (boxArray) => {
   //console.log(box)
-  this.setState({box:box});
+  this.setState({boxArray:boxArray});
   };
 onRouteChange = (route) => {
   if (route === 'signout') {
@@ -96,17 +106,17 @@ onRouteChange = (route) => {
 };
 
 onInputChange = (event) => {
-  this.setState({box:{},imageUrl:''})
+  this.setState({boxArray:[],imageUrl:''})
   this.setState({input:event.target.value})
 };
   
 onUploadImage = (event) => {
-  this.setState({box:{},input:''})
+  this.setState({boxArray:[],input:''})
   this.setState({
       selectedFile: event.target.files[0],
       loaded: 0,
     })
-      const reader = new FileReader();
+    const reader = new FileReader();
     const url = reader.readAsDataURL(event.target.files[0]);
     reader.onloadend = function (e) {
       this.setState({
@@ -137,7 +147,7 @@ onButtonSubmit = () => {
           this.setState(Object.assign(this.state.user,{entries:count}))
         })
       }
-      this.displayFaceBox(this.calculateFaceLocation(response)) 
+      this.displayFaceBox(this.calculateFaceLocationArray(response)) 
     })
     .catch(err =>console.log(err))
 
@@ -164,7 +174,7 @@ onButtonSubmit = () => {
           this.setState(Object.assign(this.state.user,{entries:count}))
         })
       }
-      this.displayFaceBox(this.calculateFaceLocation(response)) 
+      this.displayFaceBox(this.calculateFaceLocationArray(response)) 
     })
     .catch(err =>console.log(err))
     }
@@ -172,6 +182,7 @@ onButtonSubmit = () => {
 };
 
   render() {
+
     return(
       <div className="App">
         <Particles className='particle' params={particleOptions} />
@@ -181,7 +192,7 @@ onButtonSubmit = () => {
               <Logo />
               <Rank  name={this.state.user.name} entries={this.state.user.entries} />
               <ImageLinkForm onInput={this.onInputChange} onUpload={this.onUploadImage} onButtonSubmit={this.onButtonSubmit}/>
-              <FaceRecognition box={this.state.box}  imageUrl={this.state.imageUrl}/>
+              <FaceRecognition boxArray={this.state.boxArray}  imageUrl={this.state.imageUrl}/>
 
             </div>
           :(this.state.route === 'signin'

@@ -7,7 +7,7 @@ import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import SignIn from './components/SignIn/SignIn';
 import Register from './components/Register/Register';
-import Demographics from './components/Demographics/Demographics'
+//import Demographics from './components/Demographics/Demographics'
 import Particles from 'react-particles-js';
 
 const particleOptions = {
@@ -25,7 +25,7 @@ const particleOptions = {
 const intialState = {
       input:'',
       imageUrl:'',
-      box:{},
+      box:{  leftCol: 0,rightCol:0,topRow:0,bottomRow:0 ,values: []},
       values:[],
       route:'signin',
       isSignedIn:false,
@@ -65,9 +65,9 @@ calculateFaceLocation = (data) => {
   //console.log(data.rawData.outputs[0].data.regions[0].data.concepts)
   const concepts = data.rawData.outputs[0].data.regions[0].data.concepts
   const values = concepts.filter(num => num.value > 0.5)
-  this.setState({values:values});
-  console.log(values)
-  console.log(this.state.values)
+  //this.setState({values:values});
+   console.log(values.map(item =>  item.name))
+  // console.log(this.state.values)
   const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
   const image = document.getElementById('inputimage');
   const width = Number(image.width);
@@ -77,7 +77,8 @@ calculateFaceLocation = (data) => {
     leftCol: clarifaiFace.left_col*width,
     rightCol:width-(clarifaiFace.right_col*width),
     topRow:clarifaiFace.top_row*height,
-    bottomRow: height -(clarifaiFace.bottom_row*height) 
+    bottomRow: height -(clarifaiFace.bottom_row*height) ,
+    values: values.map(item =>  item.name).toString()
   }
 };
 
@@ -95,12 +96,12 @@ onRouteChange = (route) => {
 };
 
 onInputChange = (event) => {
-  this.setState({values:[],box:{}})
+  this.setState({box:{},imageUrl:''})
   this.setState({input:event.target.value})
 };
   
 onUploadImage = (event) => {
-  this.setState({values:[],box:{}})
+  this.setState({box:{},input:''})
   this.setState({
       selectedFile: event.target.files[0],
       loaded: 0,
@@ -181,7 +182,7 @@ onButtonSubmit = () => {
               <Rank  name={this.state.user.name} entries={this.state.user.entries} />
               <ImageLinkForm onInput={this.onInputChange} onUpload={this.onUploadImage} onButtonSubmit={this.onButtonSubmit}/>
               <FaceRecognition box={this.state.box}  imageUrl={this.state.imageUrl}/>
-              <Demographics values={this.state.values} />
+
             </div>
           :(this.state.route === 'signin'
               ? <SignIn loadUser={this.loadUser}  onRouteChange={this.onRouteChange}/>
